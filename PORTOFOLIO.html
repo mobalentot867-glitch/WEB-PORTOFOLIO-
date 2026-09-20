@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohammad Ryan Saputra | Teknik Konstruksi Perkapalan</title>
+    
+    <!-- Mengambil Font Modern untuk tampilan Engineering -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Ikon dari FontAwesome (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Palet Warna Industrial: Biru Laut, Baja, dan Aksen Oranye Safety */
+            --primary-color: #0f172a; /* Dark Navy */
+            --secondary-color: #1e293b; /* Steel Blue/Grey */
+            --accent-color: #f59e0b; /* Safety Orange */
+            --text-light: #f8fafc;
+            --text-dim: #94a3b8;
+            --bar-color: rgba(56, 189, 248, 0.15); /* Warna bar yang jatuh (Cyan transparan) */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- Canvas Animation Background --- */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        /* --- Typography & Utilities --- */
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-light);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--accent-color);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 1rem 0;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Hero Section --- */
+        header {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: 60px;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        /* Styling Foto Profil */
+        .profile-wrapper {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%; /* Bulat */
+            border: 4px solid var(--accent-color);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Efek Tech Rotasi di belakang foto */
+        .tech-ring {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: spin 20s linear infinite;
+            z-index: 1;
+        }
+
+        .hero-name {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .hero-degree {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .hero-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-cta {
+            padding: 12px 30px;
+            background: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+        }
+
+        .btn-cta:hover {
+            background: var(--accent-color);
+            color: var(--primary-color);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+        }
+
+        /* --- About & Details Section --- */
+        section {
+            padding: 5rem 0;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(5px);
+            padding: 2rem;
+            border-left: 4px solid var(--accent-color);
+            border-radius: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        .info-list {
+            list-style: none;
+        }
+
+        .info-list li {
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .info-list i {
+            margin-right: 10px;
+            margin-top: 5px;
+            color: var(--accent-color);
+        }
+
+        /* --- Experience Section (Realistic Job Desc) --- */
+        .experience-timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline-item {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-color);
+        }
+
+        .job-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.2rem;
+        }
+
+        .job-company {
+            font-size: 1rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .job-desc {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            margin-top: 10px;
+        }
+        
+        .job-desc ul {
+            list-style-position: inside;
+            margin-top: 5px;
+        }
+
+        /* --- Skills --- */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .skill-tag {
+            background: rgba(255,255,255,0.1);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--accent-color);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .skill-tag:hover {
+            background: var(--accent-color);
+            color: var(--primary-color);
+            cursor: default;
+        }
+
+        /* --- Contact --- */
+        .contact-box {
+            text-align: center;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            padding: 3rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: #0b1120;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* --- Animations --- */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .hero-name { font-size: 2.2rem; }
+            .hero-degree { font-size: 1.1rem; }
+            .nav-links { display: none; } /* Sederhana untuk mobile */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas untuk Efek Bar yang Berjatuhan -->
+    <div id="canvas-container">
+        <canvas id="fallingBars"></canvas>
+    </div>
+
+    <!-- Navigasi -->
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">M.R.SAPUTRA</div>
+            <div class="nav-links">
+                <a href="#home">Beranda</a>
+                <a href="#about">Tentang</a>
+                <a href="#skills">Keahlian</a>
+                <a href="#experience">Pengalaman</a>
+                <a href="#contact">Kontak</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header / Hero Section -->
+    <header id="home">
+        <div class="container hero-content">
+            <div class="profile-wrapper">
+                <!-- Foto Profil dari URL yang diberikan -->
+                <img src="https://z-cdn-media.chatglm.cn/files/bdd7cca4-135d-4d96-a52a-d54d0ad25207.jpeg?auth_key=1870118750-42e82049a15945aeb68a20f9b39cd0d9-0-6d56ac3351c5189365b2be42375746e6" 
+                     alt="Mohammad Ryan Saputra" class="profile-img">
+                <div class="tech-ring"></div>
+            </div>
+            
+            <h1 class="hero-name">Mohammad Ryan Saputra</h1>
+            <p class="hero-degree">S1 Teknik Konstruksi Perkapalan</p>
+            
+            <div class="hero-location">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Desa Jetis, Petyintunggal, Gresik</span>
+            </div>
+            
+            <a href="#contact" class="btn-cta">Hubungi Saya</a>
+        </div>
+    </header>
+
+    <!-- Tentang Saya -->
+    <section id="about">
+        <div class="container">
+            <h2 class="section-title">Profil Profesional</h2>
+            <div class="about-grid">
+                <div class="card">
+                    <h3><i class="fas fa-user-graduate"></i> Pendidikan</h3>
+                    <ul class="info-list">
+                        <li>
+                            <i class="fas fa-university"></i>
+                            <div>
+                                <strong>Sarjana Teknik (S1)</strong><br>
+                                Teknik Konstruksi Perkapalan<br>
+                                <span style="color:var(--text-dim); font-size:0.9rem;">Fokus pada desain struktur, stabilitas kapal, dan manajemen proyek galangan.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-id-card"></i> Informasi Dasar</h3>
+                    <ul class="info-list">
+                        <li><i class="fas fa-user"></i> Nama: Mohammad Ryan Saputra</li>
+                        <li><i class="fas fa-home"></i> Domisili: Gresik, Jawa Timur</li>
+                        <li><i class="fas fa-map-pin"></i> Desa: Jetis, Petyintunggal</li>
+                        <li><i class="fas fa-briefcase"></i> Status: Siap Bekerja / Pro</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-bullseye"></i> Objektif Karir</h3>
+                    <p style="color: var(--text-dim); font-size: 0.95rem;">
+                        Berkontribusi dalam industri maritim dan konstruksi kapal dengan mengaplikasikan pengetahuan teknis tentang struktur kapal, perencanaan, dan manajemen proyek untuk menciptakan solusi maritim yang efisien, aman, dan berkualitas tinggi.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Keahlian Teknis -->
+    <section id="skills">
+        <div class="container">
+            <h2 class="section-title">Keahlian Teknis</h2>
+            <div class="skills-container">
+                <span class="skill-tag">Naval Architecture</span>
+                <span class="skill-tag">Ship Structural Design</span>
+                <span class="skill-tag">AutoCAD</span>
+                <span class="skill-tag">Maxsurf</span>
+                <span class="skill-tag">ANSYS (FEA)</span>
+                <span class="skill-tag">Proyek Perkapalan</span>
+                <span class="skill-tag">Manajemen Galangan</span>
+                <span class="skill-tag">Stabilitas Kapal</span>
+                <span class="skill-tag">Baja Konstruksi</span>
+                <span class="skill-tag">K3 Keselamatan Kerja</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detail Pekerjaan (Realistis) -->
+    <section id="experience">
+        <div class="container">
+            <h2 class="section-title">Detail Pekerjaan & Proyek</h2>
+            <div class="experience-timeline">
+                
+                <!-- Simulasi Pekerjaan Lulusan Teknik Perkapalan -->
+                <div class="timeline-item">
+                    <div class="job-title">Junior Naval Architect / Engineer</div>
+                    <div class="job-company">Shipyard & Marine Industry (Gresik Area)</div>
+                    <div class="job-desc">
+                        <p>Bertanggung jawab atas perencanaan awal dan pengawasan konstruksi lambung kapal.</p>
+                        <ul>
+                            <li>Melakukan perhitungan stabilitas dan garis air kapal menggunakan perangkat lunak spesialis.</li>
+                            <li>Membuat gambar teknis detail (detail drawing) untuk konstruksi lambung dan superstruktur sesuai standar klasifikasi.</li>
+                            <li>Melakukan supervisi di lapangan (sheduling blok, welding inspection) untuk memastikan kualitas hasil las dan struktur.</li>
+                            <li>Bekerja sama dengan tim produksi untuk menyelesaikan masalah teknis selama proses fabrikasi.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="job-title">Site Supervisor / QC Officer</div>
+                    <div class="job-company">Proyek Perbaikan & Maintenance Kapal</div>
+                    <div class="job-desc">
+                        <p>Fokus pada pengawasan kualitas dan keselamatan kerja di lingkungan galangan kapal yang padat.</p>
+                        <ul>
+                            <li>Memeriksa kualitas material plat baja dan profil yang digunakan untuk konstruksi.</li>
+                            <li>Memastikan prosedur K3 (Keselamatan dan Kesehatan Kerja) diterapkan ketat, terutama pada pekerjaan ketinggian dan confined space.</li>
+                            <li>Melaporkan progres harian pekerjaan docking dan perbaikan kapal kepada Project Manager.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="job-title">Draftsperson (Cadet)</div>
+                    <div class="job-company">Engineering Consultant</div>
+                    <div class="job-desc">
+                        <p>Mendukung tim insinyur dalam dokumentasi teknis.</p>
+                        <ul>
+                            <li>Mengkonversi sketsa tangan menjadi gambar digital 2D dan 3D yang presisi.</li>
+                            <li>Membuat Bill of Materials (BOM) untuk kebutuhan material proyek.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Kontak -->
+    <section id="contact">
+        <div class="container">
+            <div class="contact-box">
+                <h2 style="margin-bottom: 1rem;">Siap Berkolaborasi</h2>
+                <p style="color: var(--text-dim); margin-bottom: 2rem;">
+                    Tertarik untuk bekerja sama dalam proyek konstruksi kapal atau engineering lainnya? Hubungi saya melalui kontak di bawah ini.
+                </p>
+                <div style="display: flex; justify-content: center; gap: 2rem; font-size: 1.2rem;">
+                    <a href="#" style="color: var(--text-light); transition: 0.3s;"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                    <a href="#" style="color: var(--text-light); transition: 0.3s;"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                    <a href="mailto:email@example.com" style="color: var(--text-light); transition: 0.3s;"><i class="fas fa-envelope"></i> Email</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Mohammad Ryan Saputra. Teknik Konstruksi Perkapalan.</p>
+    </footer>
+
+    <!-- Script Javascript -->
+    <script>
+        // --- 1. Konfigurasi Canvas & Animasi Bar yang Berjatuhan ---
+        const canvas = document.getElementById('fallingBars');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let bars = [];
+
+        // Mengatur ukuran canvas full screen
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Kelas untuk membuat objek 'Bar' (Balok) yang jatuh
+        class Bar {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                // Posisi X acak
+                this.x = Math.random() * width;
+                // Posisi Y mulai dari di atas layar (negatif)
+                this.y = Math.random() * -height;
+                
+                // Kecepatan jatuh bervariasi (parallax effect)
+                this.speed = 2 + Math.random() * 5;
+                
+                // Ukuran bar (panjang dan lebar)
+                // Panjang bervariasi agar terlihat dinamis seperti balok konstruksi
+                this.length = 20 + Math.random() * 100;
+                this.width = 2 + Math.random() * 4; // Tipis seperti garis baja atau tebal seperti balok
+                
+                // Opacity transparansi
+                this.opacity = 0.1 + Math.random() * 0.4;
+                
+                // Warna: Variasi antara Putih, Cyan, dan Orange samar
+                const colors = ['255, 255, 255', '56, 189, 248', '245, 158, 11'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                // Gerakkan ke bawah
+                this.y += this.speed;
+
+                // Jika sudah lewat bawah layar, reset ke atas
+                if (this.y > height) {
+                    this.init();
+                    this.y = -this.length; // Mulai tepat di atas agar mulus
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(${this.color}, ${this.opacity})`;
+                // Menggambar persegi panjang (bar)
+                ctx.fillRect(this.x, this.y, this.width, this.length);
+                ctx.closePath();
+            }
+        }
+
+        // Membuat banyak bar
+        function initBars() {
+            bars = [];
+            // Jumlah bar tergantung lebar layar
+            const numberOfBars = Math.floor(width / 10); 
+            for (let i = 0; i < numberOfBars; i++) {
+                bars.push(new Bar());
+            }
+        }
+
+        initBars();
+
+        // Loop Animasi
+        function animate() {
+            // Bersihkan canvas (atau beri efek jejak dengan mengisi warna semi transparan)
+            ctx.clearRect(0, 0, width, height);
+
+            bars.forEach(bar => {
+                bar.update();
+                bar.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Reset bars saat resize
+        window.addEventListener('resize', () => {
+            initBars();
+        });
+
+
+        // --- 2. Interaksi Scroll (Fade In) ---
+        // Menggunakan Intersection Observer untuk memunculkan elemen saat di-scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Pilih elemen yang ingin dianimasikan
+        const animatedElements = document.querySelectorAll('.card, .timeline-item, .skill-tag, .contact-box');
+        
+        animatedElements.forEach(el => {
+            // Set style awal
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+
+    </script>
+</body>
+</html>
